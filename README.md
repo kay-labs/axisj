@@ -1,6 +1,62 @@
 ## [주의!] 이 프로젝트는 더 이상 추가개발/개선작업을 진행하지 않습니다. 앞으로는 AX5UI를 이용해주세요.
 > This Project will not proceed further development. Please use AX5UI in the future.
 
+> **📌 Fork Notice**
+> 이 저장소는 [axisj-com/axisj](https://github.com/axisj-com/axisj)의 개인 포크입니다.
+> 원본 프로젝트는 유지보수가 종료되었으며, 이 포크에는 아래 기능이 추가되어 있습니다.
+
+## 🔧 이 포크에서 추가된 기능
+
+### AXGrid.focusBy / AXGrid.clickBy
+
+지정한 **필드 값**으로 행을 찾아 포커스 또는 클릭 이벤트를 발생시킵니다.
+
+#### 추가 배경
+행 삭제, 정렬 변경 등으로 행 인덱스가 바뀌면 기존처럼 `getSelectedItem().index`로 저장해 둔 인덱스로는
+원래 선택했던 행을 다시 찾을 수 없습니다.
+`focusBy`, `clickBy`는 인덱스 대신 **고유 필드 값(id, 코드 등)** 으로 행을 찾아 이 문제를 해결합니다.
+
+#### 사용법
+```js
+var myGrid = new AXGrid();
+
+// 'cod' 필드 값이 '100'인 행에 포커스
+myGrid.focusBy('cod', '100');
+
+// 'id' 필드 값이 25인 행을 클릭 (onclick 이벤트 발생)
+myGrid.clickBy('id', 25);
+```
+
+#### 파라미터
+| 이름 | 타입 | 설명 |
+|---|---|---|
+| `fieldName` | String | 검색할 필드명 (예: `'id'`, `'cod'`) |
+| `fieldValue` | Mixed | 찾을 값 |
+
+#### 반환값 및 동작
+| 상황 | 동작 | 반환값 |
+|---|---|---|
+| 일치하는 행이 있음 | 첫 번째로 일치하는 행에 포커스/클릭 | `true` |
+| 일치하는 행이 없음 (리스트 있음) | **마지막 행**에 포커스/클릭 | `false` |
+| 리스트가 비어 있음 | 아무 동작 안 함 | `false` |
+
+#### 참고
+- 값 비교 시 앞뒤 공백을 제거하고, 문자열 비교와 숫자 비교를 모두 수행합니다.
+  예: `'100'`, `100`, `' 100 '` 모두 같은 값으로 인식하며, `'0100'`도 `100`과 일치합니다.
+- 일치하는 값이 여러 개면 **첫 번째 행**만 대상이 됩니다.
+
+#### 활용 예: 정렬/삭제 후 선택 행 유지
+```js
+var selected = myGrid.getSelectedItem();
+var key = selected.item.id;     // 인덱스 대신 고유 값 저장
+
+myGrid.setList(newList);         // 목록 갱신, 정렬 등
+
+myGrid.focusBy('id', key);       // 같은 항목을 다시 찾아 포커스
+```
+
+---
+
 [![AX5UI](https://avatars1.githubusercontent.com/u/16002119?v=3&s=100)](http://ax5.io/)
 
 - https://github.com/ax5ui
